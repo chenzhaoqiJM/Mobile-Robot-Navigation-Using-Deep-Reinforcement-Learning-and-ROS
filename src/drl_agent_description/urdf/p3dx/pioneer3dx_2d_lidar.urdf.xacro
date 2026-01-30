@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/urdf" name="pioneer3dx" >
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find drl_agent_description)/urdf/materials.xacro" />
+
+  <!-- Import robot -->
+  <xacro:include filename="$(find drl_agent_description)/urdf/p3dx/pioneer3dx_body.xacro"/>
+  <xacro:pioneer3dx_body name="chassis" parent="base_link" meshes="package://drl_agent_description/meshes"/>
+
+  <!-- 2D Laser (Hokuyo) - 用于DRL训练的2D激光雷达配置 -->
+  <xacro:include filename="$(find drl_agent_description)/urdf/laser/hokuyo.xacro"/>
+  <xacro:laser name="front_laser" parent="chassis" xyz="0.125 0 0.25" rpy="0 0 0" meshes="package://drl_agent_description/meshes"/>
+
+  <!-- Camera -->
+  <xacro:include filename="$(find drl_agent_description)/urdf/camera/camera.xacro"/>
+  <xacro:cam name="front_camera" parent="chassis" xyz="0.025 0 0.32" rpy="0 0 0" />
+
+  <xacro:include filename="$(find drl_agent_description)/urdf/camera/cameraD.xacro"/>
+  <xacro:camD name="cameraD" parent="chassis" xyz="0.025 0 0.32" rpy="0 0 0" />
+
+  <!-- 注意：此配置仅使用2D激光雷达（Hokuyo），不包含3D Velodyne雷达 -->
+  <!-- 适用于2D导航和DRL训练场景 -->
+
+</robot>
