@@ -46,6 +46,7 @@ install(
     scripts/environment/environment_interface.py
     scripts/environment/environment.py
     scripts/environment/environment_2d_lidar.py
+    scripts/environment/environment_myrobot.py
   DESTINATION 
     lib/${PROJECT_NAME}
 )

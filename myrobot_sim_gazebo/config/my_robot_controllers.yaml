@@ -1,0 +1,13 @@
+controller_manager:
+    ros__parameters:
+        update_rate: 100
+        my_velocity_controller:
+            type: velocity_controllers/JointGroupVelocityController # 必须是这个类型
+
+my_velocity_controller:
+    ros__parameters:
+        joints:
+            - wheel1_joint
+            - wheel2_joint
+            - wheel3_joint
+

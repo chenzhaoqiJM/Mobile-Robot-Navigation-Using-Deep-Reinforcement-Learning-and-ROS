@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot name="myrobot_diff_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find myrobot_sim_gazebo)/xacro/myrobot_base.xacro" />
+    <xacro:include filename="$(find myrobot_sim_gazebo)/xacro/sensor/imu_gazebo.xacro" />
+    <xacro:include filename="$(find myrobot_sim_gazebo)/xacro/sensor/lidar_gazebo.xacro" />
+    <xacro:include filename="$(find myrobot_sim_gazebo)/xacro/sensor/camera_gazebo.xacro" />
+
+    <xacro:property name="rgbd_offset_x" value="${base_radius+0.02}" />
+    <xacro:property name="rgbd_offset_y" value="0" />
+    <xacro:property name="rgbd_offset_z" value="0.02" />
+
+    <xacro:property name="lidar_offset_x" value="0.07" />
+    <xacro:property name="lidar_offset_y" value="0" />
+    <xacro:property name="lidar_offset_z" value="${base_height/2+0.01}" />
+
+    <!-- Base -->
+    <xacro:base_gazebo/>
+
+    <!-- rgbd -->
+    <!-- <joint name="rgbd_joint" type="fixed">
+        <origin xyz="${rgbd_offset_x} ${rgbd_offset_y} ${rgbd_offset_z}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+    </joint> -->
+
+    <!-- 保持与camera_link一致 -->
+    <!-- <xacro:rgbd_camera prefix="camera"/> -->
+
+    <!-- Lidar -->
+    <joint name="lidar_joint" type="fixed">
+        <origin xyz="${lidar_offset_x} ${lidar_offset_y} ${lidar_offset_z}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="laser_link"/>
+    </joint>
+
+    <xacro:lidar prefix="laser"/>
+
+    <!-- imu -->
+    <joint name="imu_joint" type="fixed">
+        <origin xyz="0 0 ${base_height/2+0.01}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+    </joint>
+
+    <xacro:imu_xacro prefix="imu"/>
+
+    <!-- rgbd_camera -->
+    <joint name="rgbd_camera_joint" type="fixed">
+        <origin xyz="${rgbd_offset_x} ${rgbd_offset_y} ${rgbd_offset_z}" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+    </joint>
+
+    <xacro:mipi_camera prefix="camera"/>
+
+</robot>

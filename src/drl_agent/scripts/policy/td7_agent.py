@@ -280,7 +280,7 @@ class Agent(object):
                     ) / self.exploration_noise_decay_steps
                 action = action + torch.randn_like(action) * self.exploration_noise
 
-            return action.clamp(-1, 1).cpu().detach().numpy().flatten() * self.max_action
+            return action.clamp(-1, 1).detach().cpu().numpy().flatten() * self.max_action
 
     def train(self):
         self.training_steps += 1
