@@ -97,7 +97,18 @@ class Critic(nn.Module):
 
 
 class Agent(object):
-    def __init__(self, state_dim, action_dim, max_action, hp, log_dir=None):
+    def __init__(self, state_dim, action_dim, max_action, hp, log_dir=None, device="auto"):
+        """
+        初始化 TD7 Agent
+        
+        Args:
+            state_dim: 状态空间维度
+            action_dim: 动作空间维度
+            max_action: 最大动作值
+            hp: 超参数字典
+            log_dir: TensorBoard 日志目录
+            device: 训练设备，可选 "cpu"、"cuda" 或 "auto"（自动选择）
+        """
         # Hyperparameters
         self.hyperparameters = self.prep_hyperparameters(hp)
 
@@ -146,7 +157,18 @@ class Agent(object):
         self.critic_activ = self.hyperparameters["critic_activ"]
         self.critic_lr = self.hyperparameters["critic_lr"]
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # 设备选择逻辑
+        if device == "auto":
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        elif device == "cuda":
+            if not torch.cuda.is_available():
+                print("警告: CUDA 不可用，回退到 CPU")
+                self.device = torch.device("cpu")
+            else:
+                self.device = torch.device("cuda")
+        else:
+            self.device = torch.device("cpu")
+        print(f"使用设备: {self.device}")
 
         self.actor = Actor(
             state_dim, action_dim, self.zs_dim, self.actor_hdim, self.actor_activ
@@ -258,7 +280,7 @@ class Agent(object):
                     ) / self.exploration_noise_decay_steps
                 action = action + torch.randn_like(action) * self.exploration_noise
 
-            return action.clamp(-1, 1).cpu().data.numpy().flatten() * self.max_action
+            return action.clamp(-1, 1).cpu().detach().numpy().flatten() * self.max_action
 
     def train(self):
         self.training_steps += 1
