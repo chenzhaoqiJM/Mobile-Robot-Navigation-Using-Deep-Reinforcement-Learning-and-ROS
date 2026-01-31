@@ -2,20 +2,41 @@
 # 用于深度强化学习(DRL)导航训练
 
 environment:
-  lower: -5.0
-  upper: 5.0
-  num_of_obstacles: 12
-  environment_state_dim: 20
-  agent_state_dim: 4
-  action_dim: 2
-  agent_name: "myrobot_diff_bot"  # 你的机器人实体名称
-  max_action: 1.0
-  actions_low: [-1.0, -1.0]
-  actions_high: [1.0, 1.0]
+  # 训练区域边界（米）
+  lower: -5.0              # 区域下边界，机器人和目标点的随机生成范围下限
+  upper: 5.0               # 区域上边界，机器人和目标点的随机生成范围上限
+  
+  # 障碍物数量
+  num_of_obstacles: 12     # 训练环境中随机放置的障碍物数量
+  
+  # 状态空间维度
+  environment_state_dim: 60  # 激光雷达状态维度，即将雷达数据降采样到多少个bin
+                             # 输入到神经网络的激光雷达特征数量
+  agent_state_dim: 4         # 智能体状态维度: [到目标距离, 相对角度, 当前线速度, 当前角速度]
+  
+  # 动作空间配置
+  action_dim: 2            # 动作空间维度: [线速度, 角速度]
+  max_action: 1.0          # 最大动作值（归一化后的最大值）
+  actions_low: [-1.0, -1.0]   # 动作空间下界: [最小线速度, 最小角速度]
+  actions_high: [1.0, 1.0]    # 动作空间上界: [最大线速度, 最大角速度]
+  
+  # 机器人配置
+  agent_name: "myrobot_diff_bot"  # Gazebo中机器人模型的名称，用于重置位置
 
 threshold_parameters:
-  goal_threshold: 0.3
-  collision_threshold: 0.35
-  time_delta: 0.1
-  inter_entity_distance: 1.5
-  lidar_max_range: 15  # 与你的激光雷达配置一致
+  # 目标判定阈值（米）
+  goal_threshold: 0.1      # 到达目标的距离阈值，小于此距离认为到达目标
+  
+  # 碰撞判定阈值（米）
+  collision_threshold: 0.15  # 碰撞检测阈值，激光雷达最小距离小于此值认为发生碰撞
+  
+  # 时间步长（秒）
+  time_delta: 0.1          # 每个动作执行后等待的时间，影响仿真速度和控制频率
+  
+  # 实体间距（米）
+  inter_entity_distance: 1.5  # 障碍物、机器人、目标点之间的最小距离
+                               # 用于随机放置时避免重叠
+  
+  # 激光雷达最大有效距离（米）
+  lidar_max_range: 15      # 激光雷达的最大有效距离，超出此范围的读数将被截断
+                           # 应与机器人实际激光雷达参数一致

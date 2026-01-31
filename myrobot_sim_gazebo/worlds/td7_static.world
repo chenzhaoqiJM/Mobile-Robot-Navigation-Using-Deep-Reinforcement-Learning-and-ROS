@@ -12,6 +12,9 @@
       <update_rate>100.0</update_rate>
     </plugin>
 
+    <!-- Enable entity spawning service -->
+    <plugin name="gazebo_ros_factory" filename="libgazebo_ros_factory.so"/>
+
     <include>
       <uri>model://ground_plane</uri>
     </include>

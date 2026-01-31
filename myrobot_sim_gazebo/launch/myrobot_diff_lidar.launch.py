@@ -13,7 +13,7 @@ import xacro
 def generate_launch_description():
 
     package_name='myrobot_sim_gazebo' #<--- CHANGE ME
-    world_file_path = 'worlds/td7_static.world'
+    world_file_path = 'worlds/turtlebot3_world.world'
 
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
     pkg_path = os.path.join(get_package_share_directory(package_name))

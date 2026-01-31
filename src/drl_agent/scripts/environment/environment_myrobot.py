@@ -34,6 +34,11 @@ from drl_agent_interfaces.srv import Step, Reset, Seed, GetDimensions, SampleAct
 
 from file_manager import load_yaml
 
+# 全局变量：控制是否使用完整360度激光雷达数据
+# True: 使用全部360度数据
+# False: 仅使用前方180度数据 (-90度到+90度)
+USE_FULL_LIDAR_RANGE = True
+
 
 class EnvironmentMyRobot(Node):
     """MyRobot差速机器人环境节点，为DRL提供所需服务。
@@ -259,17 +264,27 @@ class EnvironmentMyRobot(Node):
             if num_readings == 0:
                 return
             
-            # 计算每个bin对应的角度范围
-            # 假设我们关注的是前方180度范围 (-90度 到 +90度)
-            bin_size = np.pi / self.environment_dim  # 每个bin的角度大小
+            # 根据USE_FULL_LIDAR_RANGE选择角度范围
+            if USE_FULL_LIDAR_RANGE:
+                # 使用完整360度范围
+                angle_range = 2 * np.pi
+                angle_offset = np.pi  # 从-pi开始
+            else:
+                # 仅使用前方180度范围 (-90度 到 +90度)
+                angle_range = np.pi
+                angle_offset = np.pi / 2  # 从-pi/2开始
+            
+            bin_size = angle_range / self.environment_dim  # 每个bin的角度大小
             
             for i in range(num_readings):
                 # 计算当前激光束的角度
                 angle = angle_min + i * angle_increment
                 
-                # 只处理前方180度范围 (-pi/2 到 pi/2)
-                if angle < -np.pi / 2 or angle > np.pi / 2:
-                    continue
+                # 根据配置过滤角度范围
+                if not USE_FULL_LIDAR_RANGE:
+                    # 只处理前方180度范围 (-pi/2 到 pi/2)
+                    if angle < -np.pi / 2 or angle > np.pi / 2:
+                        continue
                 
                 # 获取距离值
                 dist = ranges[i]
@@ -281,8 +296,8 @@ class EnvironmentMyRobot(Node):
                     dist = self.lidar_max_range
                 
                 # 计算该角度属于哪个bin
-                # 将角度从 [-pi/2, pi/2] 映射到 [0, environment_dim-1]
-                bin_index = int((angle + np.pi / 2) / bin_size)
+                # 根据角度范围映射到 [0, environment_dim-1]
+                bin_index = int((angle + angle_offset) / bin_size)
                 bin_index = max(0, min(bin_index, self.environment_dim - 1))
                 
                 # 取该bin内的最小距离

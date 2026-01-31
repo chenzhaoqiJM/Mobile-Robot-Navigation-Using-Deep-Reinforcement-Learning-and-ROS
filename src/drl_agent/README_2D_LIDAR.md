@@ -48,6 +48,19 @@ source install/setup.zsh
 ros2 run drl_agent train_td7_agent.py
 ```
 
+### 步骤5：测试智能体
+
+```bash
+# 终端1 - 启动仿真
+ros2 launch drl_agent_gazebo simulation_2d_lidar.launch.py
+
+# 终端2 - 运行环境节点
+ros2 run drl_agent environment_2d_lidar.py --ros-args -p environment_mode:=test
+
+# 终端3 - 运行测试
+ros2 run drl_agent test_td7_agent.py
+```
+
 ## 2D vs 3D 雷达对比
 
 | 特性 | 3D雷达 (Velodyne) | 2D雷达 (Hokuyo) |
