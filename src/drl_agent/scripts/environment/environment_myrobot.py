@@ -37,7 +37,7 @@ from file_manager import load_yaml
 # 全局变量：控制是否使用完整360度激光雷达数据
 # True: 使用全部360度数据
 # False: 仅使用前方180度数据 (-90度到+90度)
-USE_FULL_LIDAR_RANGE = True
+USE_FULL_LIDAR_RANGE = False
 
 
 class EnvironmentMyRobot(Node):
